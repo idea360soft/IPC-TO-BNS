@@ -141,6 +141,52 @@
             color: #27ae60;
         }
 
+        .search-results {
+            background: white;
+            border-radius: 15px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            position: relative;
+            z-index: 100;
+        }
+
+        .search-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-section {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 16px;
+        }
+
+        .search-description {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -160,7 +206,10 @@
 </head>
 <body>
     <div class="container">
-        <input type="text" class="search-bar" placeholder="Type Keyword to Search old IPC Section">
+        <div style="position: relative;">
+            <input type="text" class="search-bar" id="searchBar" placeholder="Type Keyword to Search old IPC Section">
+            <div class="search-results" id="searchResults"></div>
+        </div>
         
         <h1 class="title">Indian Penal Code to Bharatiya Nyay Sanhita, 2023</h1>
         
@@ -177,28 +226,39 @@
     </div>
 
     <script>
-        // Sample mapping data (in a real application, this would come from a database or API)
-        const ipcToBnsMapping = {
-            '300': '103', // Murder
-            '302': '103', // Punishment for murder
-            '304': '105', // Punishment for culpable homicide not amounting to murder
-            '307': '109', // Attempt to murder
-            '320': '115', // Grievous hurt
-            '322': '118', // Voluntarily causing grievous hurt
-            '354': '74',  // Assault or criminal force to woman with intent to outrage her modesty
-            '363': '137', // Kidnapping
-            '366': '143', // Kidnapping, abducting or inducing woman to compel her marriage
-            '375': '63',  // Rape
-            '376': '64',  // Punishment for rape
-            '378': '303', // Theft
-            '380': '305', // Theft in dwelling house
-            '392': '309', // Robbery
-            '395': '311', // Dacoity
-            '406': '316', // Punishment for criminal breach of trust
-            '420': '318', // Cheating and dishonestly inducing delivery of property
-            '498A': '85', // Husband or relative of husband of a woman subjecting her to cruelty
-            '504': '356', // Intentional insult with intent to provoke breach of peace
-            '506': '351'  // Punishment for criminal intimidation
+        // Comprehensive IPC to BNS mapping with descriptions
+        const ipcDatabase = {
+            '300': { bns: '103', description: 'Murder', keywords: ['murder', 'killing', 'homicide', 'death'] },
+            '302': { bns: '103', description: 'Punishment for murder', keywords: ['murder', 'punishment', 'death penalty', 'life imprisonment'] },
+            '304': { bns: '105', description: 'Culpable homicide not amounting to murder', keywords: ['culpable homicide', 'manslaughter', 'death', 'negligence'] },
+            '307': { bns: '109', description: 'Attempt to murder', keywords: ['attempt', 'murder', 'trying to kill'] },
+            '320': { bns: '115', description: 'Grievous hurt', keywords: ['grievous hurt', 'serious injury', 'bodily harm'] },
+            '322': { bns: '118', description: 'Voluntarily causing grievous hurt', keywords: ['grievous hurt', 'voluntary', 'intentional injury'] },
+            '354': { bns: '74', description: 'Assault on woman with intent to outrage modesty', keywords: ['modesty', 'woman', 'assault', 'sexual harassment'] },
+            '363': { bns: '137', description: 'Kidnapping', keywords: ['kidnapping', 'abduction', 'forcible taking'] },
+            '366': { bns: '143', description: 'Kidnapping woman to compel marriage', keywords: ['kidnapping', 'marriage', 'woman', 'forced marriage'] },
+            '375': { bns: '63', description: 'Rape', keywords: ['rape', 'sexual assault', 'sexual violence'] },
+            '376': { bns: '64', description: 'Punishment for rape', keywords: ['rape', 'punishment', 'sexual assault'] },
+            '378': { bns: '303', description: 'Theft', keywords: ['theft', 'stealing', 'property'] },
+            '380': { bns: '305', description: 'Theft in dwelling house', keywords: ['theft', 'house', 'dwelling', 'burglary'] },
+            '392': { bns: '309', description: 'Robbery', keywords: ['robbery', 'theft', 'force', 'violence'] },
+            '395': { bns: '311', description: 'Dacoity', keywords: ['dacoity', 'gang robbery', 'armed robbery'] },
+            '406': { bns: '316', description: 'Criminal breach of trust', keywords: ['breach of trust', 'embezzlement', 'misappropriation'] },
+            '420': { bns: '318', description: 'Cheating and dishonestly inducing delivery of property', keywords: ['cheating', 'fraud', 'dishonest', 'property'] },
+            '498A': { bns: '85', description: 'Cruelty by husband or his relatives', keywords: ['cruelty', 'husband', 'domestic violence', 'dowry'] },
+            '504': { bns: '356', description: 'Intentional insult to provoke breach of peace', keywords: ['insult', 'provoke', 'peace', 'public order'] },
+            '506': { bns: '351', description: 'Criminal intimidation', keywords: ['intimidation', 'threat', 'coercion'] },
+            '279': { bns: '281', description: 'Rash driving or riding on public way', keywords: ['rash driving', 'negligent driving', 'traffic', 'accident'] },
+            '294': { bns: '296', description: 'Obscene acts and songs', keywords: ['obscene', 'vulgar', 'public decency'] },
+            '323': { bns: '115', description: 'Punishment for voluntarily causing hurt', keywords: ['hurt', 'assault', 'battery', 'physical violence'] },
+            '341': { bns: '126', description: 'Punishment for wrongful restraint', keywords: ['wrongful restraint', 'illegal detention', 'freedom'] },
+            '342': { bns: '127', description: 'Punishment for wrongful confinement', keywords: ['wrongful confinement', 'illegal imprisonment', 'detention'] },
+            '379': { bns: '304', description: 'Punishment for theft', keywords: ['theft', 'punishment', 'stealing'] },
+            '409': { bns: '314', description: 'Criminal breach of trust by public servant', keywords: ['breach of trust', 'public servant', 'corruption'] },
+            '447': { bns: '329', description: 'Punishment for criminal trespass', keywords: ['trespass', 'property', 'unlawful entry'] },
+            '452': { bns: '333', description: 'House-trespass after preparation for hurt', keywords: ['house trespass', 'preparation', 'hurt'] },
+            '468': { bns: '336', description: 'Forgery for purpose of cheating', keywords: ['forgery', 'cheating', 'fake documents'] },
+            '471': { bns: '340', description: 'Using as genuine a forged document', keywords: ['forged document', 'fake', 'fraudulent use'] }
         };
 
         function convertSection() {
@@ -216,10 +276,13 @@
             
             // Simulate API call delay
             setTimeout(() => {
-                const bnsSection = ipcToBnsMapping[input];
+                const sectionData = ipcDatabase[input];
                 
-                if (bnsSection) {
-                    showResult(`IPC Section ${input} corresponds to BNS Section ${bnsSection}`, 'success');
+                if (sectionData) {
+                    showResult(`
+                        <strong>IPC Section ${input}</strong>: ${sectionData.description}<br>
+                        <strong>Corresponds to BNS Section ${sectionData.bns}</strong>
+                    `, 'success');
                 } else {
                     showResult(`No corresponding BNS section found for IPC Section ${input}. This section may have been repealed or restructured.`, 'error');
                 }
@@ -238,6 +301,78 @@
             resultSection.scrollIntoView({ behavior: 'smooth' });
         }
         
+        function searchSections(query) {
+            if (!query || query.length < 2) {
+                hideSearchResults();
+                return;
+            }
+            
+            query = query.toLowerCase();
+            const results = [];
+            
+            // Search through IPC database
+            for (const [section, data] of Object.entries(ipcDatabase)) {
+                // Check if query matches section number
+                if (section.toLowerCase().includes(query)) {
+                    results.push({ section, data, matchType: 'section' });
+                    continue;
+                }
+                
+                // Check if query matches description
+                if (data.description.toLowerCase().includes(query)) {
+                    results.push({ section, data, matchType: 'description' });
+                    continue;
+                }
+                
+                // Check if query matches keywords
+                if (data.keywords.some(keyword => keyword.includes(query))) {
+                    results.push({ section, data, matchType: 'keyword' });
+                }
+            }
+            
+            displaySearchResults(results);
+        }
+        
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">No matching sections found</div>';
+                searchResults.style.display = 'block';
+                return;
+            }
+            
+            // Sort results by relevance (section matches first, then description, then keywords)
+            results.sort((a, b) => {
+                const order = { section: 1, description: 2, keyword: 3 };
+                return order[a.matchType] - order[b.matchType];
+            });
+            
+            let html = '';
+            results.forEach(result => {
+                html += `
+                    <div class="search-item" onclick="selectSection('${result.section}')">
+                        <div class="search-section">IPC Section ${result.section} → BNS Section ${result.data.bns}</div>
+                        <div class="search-description">${result.data.description}</div>
+                    </div>
+                `;
+            });
+            
+            searchResults.innerHTML = html;
+            searchResults.style.display = 'block';
+        }
+        
+        function hideSearchResults() {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.style.display = 'none';
+        }
+        
+        function selectSection(section) {
+            document.getElementById('ipcSection').value = section;
+            hideSearchResults();
+            document.getElementById('searchBar').value = '';
+        }
+        
         // Allow Enter key to trigger conversion
         document.getElementById('ipcSection').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -246,10 +381,25 @@
         });
         
         // Search functionality for the top search bar
-        document.querySelector('.search-bar').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            // In a real application, this would filter through available sections
-            console.log('Searching for:', searchTerm);
+        document.getElementById('searchBar').addEventListener('input', function(e) {
+            searchSections(e.target.value);
+        });
+        
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            const searchBar = document.getElementById('searchBar');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (!searchBar.contains(e.target) && !searchResults.contains(e.target)) {
+                hideSearchResults();
+            }
+        });
+        
+        // Clear search results when search bar is focused
+        document.getElementById('searchBar').addEventListener('focus', function() {
+            if (this.value.length >= 2) {
+                searchSections(this.value);
+            }
         });
     </script>
 </body>
