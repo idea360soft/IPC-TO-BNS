@@ -3,142 +3,192 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IPC to BNS Converter - Login</title>
+  <title>IPC to BNS Converter</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
-      min-height: 100vh;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #b3e5fc;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
     .container {
-      max-width: 600px;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
+      max-width: 600px;
       text-align: center;
     }
-    .title {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #2c3e50;
-      margin-bottom: 10px;
-    }
-    .subtitle {
-      font-size: 1rem;
-      color: #666;
-      margin-bottom: 30px;
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
     }
     input, button {
-      width: 100%;
-      padding: 15px;
+      padding: 12px;
+      font-size: 16px;
       margin: 10px 0;
-      font-size: 1rem;
-      border-radius: 10px;
+      width: 100%;
+      border-radius: 8px;
       border: 2px solid #333;
-    }
-    input:focus {
-      border-color: #4CAF50;
-      box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+      box-sizing: border-box;
     }
     button {
-      background-color: #4CAF50;
+      background: #4CAF50;
       color: white;
+      border: none;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
     button:hover {
-      background-color: #45a049;
+      background: #388E3C;
+    }
+    .hidden {
+      display: none;
     }
     .error {
       color: red;
-      display: none;
+      margin-top: 10px;
     }
-    #mainApp {
-      display: none;
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-left: 5px solid #4CAF50;
+      background: #f1f8e9;
+      text-align: left;
+    }
+    .search-results {
+      text-align: left;
+      margin-top: 10px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .search-results div {
+      padding: 10px;
+      cursor: pointer;
+    }
+    .search-results div:hover {
+      background: #e0f7fa;
     }
   </style>
 </head>
 <body>
-  <div class="container" id="loginContainer">
-    <h1 class="title">🔒 Login</h1>
-    <p class="subtitle">IPC to Bharatiya Nyay Sanhita Converter</p>
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button onclick="login()">Login</button>
-    <div class="error" id="loginError">Invalid username or password</div>
-  </div>
 
-  <div class="container" id="mainApp">
-    <button style="float:right; background:#e74c3c;" onclick="logout()">Logout</button>
-    <h1 class="title">IPC to BNS Converter</h1>
-    <input type="text" id="ipcSection" placeholder="Enter IPC Section (e.g., 302)">
-    <button onclick="convert()">Convert</button>
-    <div id="result" style="margin-top: 20px; font-size: 1.2rem;"></div>
-  </div>
+<div class="container" id="loginSection">
+  <h2>🔒 Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <div class="error" id="loginError">Invalid username or password</div>
+</div>
 
-  <script>
-    const ipcToBns = {
-      '300': { bns: '103', desc: 'Murder' },
-      '302': { bns: '103', desc: 'Punishment for murder' },
-      '304': { bns: '105', desc: 'Culpable homicide not amounting to murder' },
-      '307': { bns: '109', desc: 'Attempt to murder' },
-      '375': { bns: '63', desc: 'Rape' },
-      '376': { bns: '64', desc: 'Punishment for rape' },
-      '379': { bns: '304', desc: 'Punishment for theft' },
-      '420': { bns: '318', desc: 'Cheating and dishonestly inducing delivery of property' }
-      // Add more mappings as needed
-    };
+<div class="container hidden" id="mainApp">
+  <button onclick="logout()" style="float:right; background:#e74c3c;">Logout</button>
+  <h2>Indian Penal Code to Bharatiya Nyay Sanhita, 2023</h2>
 
-    function login() {
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-      const errorBox = document.getElementById("loginError");
+  <input type="text" id="searchInput" placeholder="🔍 Type Keyword to Search old IPC Section" oninput="searchSections(this.value)">
+  <div class="search-results" id="searchResults"></div>
 
-      if (user === "admin" && pass === "1234") {
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("mainApp").style.display = "block";
-        errorBox.style.display = "none";
-      } else {
-        errorBox.style.display = "block";
+  <input type="text" id="ipcInput" placeholder="Enter IPC Section (e.g., 302)">
+  <button onclick="convert()">CLICK</button>
+
+  <div class="result" id="resultBox" style="display:none;"></div>
+</div>
+
+<script>
+  const ipcMap = {
+    '302': { bns: '103', desc: 'Punishment for murder' },
+    '304': { bns: '105', desc: 'Culpable homicide not amounting to murder' },
+    '307': { bns: '109', desc: 'Attempt to murder' },
+    '375': { bns: '63', desc: 'Rape' },
+    '376': { bns: '64', desc: 'Punishment for rape' },
+    '379': { bns: '304', desc: 'Punishment for theft' },
+    '420': { bns: '318', desc: 'Cheating and dishonestly inducing delivery of property' }
+  };
+
+  const keywords = {
+    'murder': '302',
+    'homicide': '304',
+    'attempt to kill': '307',
+    'rape': '375',
+    'sexual violence': '376',
+    'theft': '379',
+    'cheating': '420'
+  };
+
+  function login() {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value.trim();
+    const error = document.getElementById('loginError');
+
+    if (u === 'admin' && p === '1234') {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+      error.style.display = 'none';
+    } else {
+      error.style.display = 'block';
+    }
+  }
+
+  function logout() {
+    document.getElementById('mainApp').classList.add('hidden');
+    document.getElementById('loginSection').classList.remove('hidden');
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('searchResults').innerHTML = '';
+    document.getElementById('searchInput').value = '';
+    document.getElementById('ipcInput').value = '';
+  }
+
+  function convert() {
+    const ipc = document.getElementById('ipcInput').value.trim();
+    const result = document.getElementById('resultBox');
+
+    if (ipcMap[ipc]) {
+      const bnsData = ipcMap[ipc];
+      result.innerHTML = `<b>IPC ${ipc}:</b> ${bnsData.desc}<br><b>BNS ${bnsData.bns}</b>`;
+      result.style.display = 'block';
+    } else {
+      result.innerHTML = 'No matching section found.';
+      result.style.display = 'block';
+    }
+  }
+
+  function searchSections(keyword) {
+    const results = document.getElementById('searchResults');
+    results.innerHTML = '';
+    if (keyword.length < 2) {
+      results.style.display = 'none';
+      return;
+    }
+
+    let found = false;
+    for (let [desc, section] of Object.entries(keywords)) {
+      if (desc.includes(keyword.toLowerCase())) {
+        const item = document.createElement('div');
+        item.textContent = `IPC ${section} - ${ipcMap[section].desc}`;
+        item.onclick = () => {
+          document.getElementById('ipcInput').value = section;
+          results.innerHTML = '';
+          results.style.display = 'none';
+        };
+        results.appendChild(item);
+        found = true;
       }
     }
 
-    function logout() {
-      document.getElementById("mainApp").style.display = "none";
-      document.getElementById("loginContainer").style.display = "block";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("result").innerHTML = "";
+    if (!found) {
+      results.innerHTML = '<div>No results found</div>';
     }
 
-    function convert() {
-      const section = document.getElementById("ipcSection").value.trim();
-      const result = document.getElementById("result");
+    results.style.display = 'block';
+  }
+</script>
 
-      if (ipcToBns[section]) {
-        result.innerHTML = `
-          <strong>IPC Section ${section}</strong>: ${ipcToBns[section].desc}<br>
-          ➤ <strong>BNS Section ${ipcToBns[section].bns}</strong>
-        `;
-        result.style.color = "#2c3e50";
-      } else {
-        result.innerHTML = "Section not found or not mapped.";
-        result.style.color = "red";
-      }
-    }
-  </script>
 </body>
 </html>
