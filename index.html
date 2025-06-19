@@ -28,6 +28,85 @@
             backdrop-filter: blur(10px);
         }
 
+        /* Login Page Styles */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .login-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            background: white;
+            border: 3px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 18px;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .login-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .login-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .login-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .login-error {
+            color: #e74c3c;
+            font-size: 16px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .lock-icon {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        /* Main App Styles */
+        .main-app {
+            display: none;
+        }
+
         .search-bar {
             background: white;
             border-radius: 25px;
@@ -187,25 +266,70 @@
             font-style: italic;
         }
 
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
                 margin: 10px;
             }
             
-            .title {
+            .title, .login-title {
                 font-size: 2rem;
             }
             
-            .click-button {
+            .click-button, .login-button {
                 padding: 15px 35px;
                 font-size: 20px;
+            }
+
+            .logout-button {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                display: block;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Page -->
+    <div class="container login-container" id="loginPage">
+        <div class="lock-icon">🔒</div>
+        <h1 class="login-title">Secure Access</h1>
+        <p class="login-subtitle">IPC to Bharatiya Nyay Sanhita Converter</p>
+        
+        <div class="login-form">
+            <input type="text" class="login-input" id="username" placeholder="Enter Username">
+            <input type="password" class="login-input" id="password" placeholder="Enter Password">
+            <button class="login-button" onclick="login()">LOGIN</button>
+            <div class="login-error" id="loginError">Invalid username or password!</div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="container main-app" id="mainApp">
+        <button class="logout-button" onclick="logout()">Logout</button>
+        
         <div style="position: relative;">
             <input type="text" class="search-bar" id="searchBar" placeholder="Type Keyword to Search old IPC Section">
             <div class="search-results" id="searchResults"></div>
@@ -226,6 +350,84 @@
     </div>
 
     <script>
+        // Login credentials (in a real application, this would be handled server-side)
+        const validCredentials = {
+            'admin': 'admin123',
+            'lawyer': 'law2023',
+            'user': 'password',
+            'ipc': 'bns2023'
+        };
+
+        // Check if user is already logged in
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            showMainApp();
+        }
+
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorElement = document.getElementById('loginError');
+            
+            if (!username || !password) {
+                showError('Please enter both username and password.');
+                return;
+            }
+            
+            // Check credentials
+            if (validCredentials[username] && validCredentials[username] === password) {
+                // Successful login
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('username', username);
+                showMainApp();
+                hideError();
+            } else {
+                showError('Invalid username or password!');
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
+            showLoginPage();
+        }
+
+        function showMainApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        }
+
+        function showLoginPage() {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            hideError();
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('loginError');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        // Allow Enter key to trigger login
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('password').focus();
+            }
+        });
+
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
         // Comprehensive IPC to BNS mapping with descriptions
         const ipcDatabase = {
             '300': { bns: '103', description: 'Murder', keywords: ['murder', 'killing', 'homicide', 'death'] },
@@ -373,34 +575,42 @@
             document.getElementById('searchBar').value = '';
         }
         
-        // Allow Enter key to trigger conversion
-        document.getElementById('ipcSection').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                convertSection();
-            }
-        });
-        
-        // Search functionality for the top search bar
-        document.getElementById('searchBar').addEventListener('input', function(e) {
-            searchSections(e.target.value);
-        });
-        
-        // Hide search results when clicking outside
-        document.addEventListener('click', function(e) {
-            const searchBar = document.getElementById('searchBar');
-            const searchResults = document.getElementById('searchResults');
+        // Main app event listeners (only add if main app is visible)
+        function initMainAppListeners() {
+            // Allow Enter key to trigger conversion
+            document.getElementById('ipcSection').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    convertSection();
+                }
+            });
             
-            if (!searchBar.contains(e.target) && !searchResults.contains(e.target)) {
-                hideSearchResults();
-            }
-        });
-        
-        // Clear search results when search bar is focused
-        document.getElementById('searchBar').addEventListener('focus', function() {
-            if (this.value.length >= 2) {
-                searchSections(this.value);
-            }
-        });
+            // Search functionality for the top search bar
+            document.getElementById('searchBar').addEventListener('input', function(e) {
+                searchSections(e.target.value);
+            });
+            
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                const searchBar = document.getElementById('searchBar');
+                const searchResults = document.getElementById('searchResults');
+                
+                if (!searchBar.contains(e.target) && !searchResults.contains(e.target)) {
+                    hideSearchResults();
+                }
+            });
+            
+            // Clear search results when search bar is focused
+            document.getElementById('searchBar').addEventListener('focus', function() {
+                if (this.value.length >= 2) {
+                    searchSections(this.value);
+                }
+            });
+        }
+
+        // Initialize main app listeners when app is shown
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            setTimeout(initMainAppListeners, 100);
+        }
     </script>
 </body>
 </html>
