@@ -31,20 +31,34 @@
     input, button {
       padding: 12px;
       font-size: 16px;
-      margin: 10px 0;
-      width: 100%;
+      margin: 10px 5px;
       border-radius: 8px;
       border: 2px solid #333;
       box-sizing: border-box;
     }
-    button {
+    input {
+      width: calc(100% - 120px);
+    }
+    .search-button {
+      width: 90px;
       background: #4CAF50;
       color: white;
       border: none;
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
+    .search-button:hover {
+      background: #388E3C;
+    }
+    .action-button {
+      width: 100%;
+      background: #4CAF50;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .action-button:hover {
       background: #388E3C;
     }
     .hidden {
@@ -84,19 +98,22 @@
   <h2>🔒 Login</h2>
   <input type="text" id="username" placeholder="Username">
   <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
+  <button class="action-button" onclick="login()">Login</button>
   <div class="error" id="loginError">Invalid username or password</div>
 </div>
 
 <div class="container hidden" id="mainApp">
-  <button onclick="logout()" style="float:right; background:#e74c3c;">Logout</button>
+  <button onclick="logout()" style="float:right; background:#e74c3c; color:white; border:none; padding:10px; border-radius:5px;">Logout</button>
   <h2>Indian Penal Code to Bharatiya Nyay Sanhita, 2023</h2>
 
-  <input type="text" id="searchInput" placeholder="🔍 Type Keyword to Search old IPC Section" oninput="searchSections(this.value)">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <input type="text" id="searchInput" placeholder="🔍 Type Keyword to Search old IPC Section">
+    <button class="search-button" onclick="searchFromButton()">Search</button>
+  </div>
   <div class="search-results" id="searchResults"></div>
 
   <input type="text" id="ipcInput" placeholder="Enter IPC Section (e.g., 302)">
-  <button onclick="convert()">CLICK</button>
+  <button class="action-button" onclick="convert()">CLICK</button>
 
   <div class="result" id="resultBox" style="display:none;"></div>
 </div>
@@ -159,6 +176,11 @@
     }
   }
 
+  function searchFromButton() {
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    searchSections(keyword);
+  }
+
   function searchSections(keyword) {
     const results = document.getElementById('searchResults');
     results.innerHTML = '';
@@ -169,7 +191,7 @@
 
     let found = false;
     for (let [desc, section] of Object.entries(keywords)) {
-      if (desc.includes(keyword.toLowerCase())) {
+      if (desc.includes(keyword)) {
         const item = document.createElement('div');
         item.textContent = `IPC ${section} - ${ipcMap[section].desc}`;
         item.onclick = () => {
