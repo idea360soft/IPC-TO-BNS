@@ -1,216 +1,817 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IPC to BNS Converter</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #b3e5fc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 600px;
-      text-align: center;
-    }
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
-    }
-    input, button {
-      padding: 12px;
-      font-size: 16px;
-      margin: 10px 5px;
-      border-radius: 8px;
-      border: 2px solid #333;
-      box-sizing: border-box;
-    }
-    input {
-      width: calc(100% - 120px);
-    }
-    .search-button {
-      width: 90px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .search-button:hover {
-      background: #388E3C;
-    }
-    .action-button {
-      width: 100%;
-      background: #4CAF50;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-    }
-    .action-button:hover {
-      background: #388E3C;
-    }
-    .hidden {
-      display: none;
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      border-left: 5px solid #4CAF50;
-      background: #f1f8e9;
-      text-align: left;
-    }
-    .search-results {
-      text-align: left;
-      margin-top: 10px;
-      background: #f5f5f5;
-      border-radius: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .search-results div {
-      padding: 10px;
-      cursor: pointer;
-    }
-    .search-results div:hover {
-      background: #e0f7fa;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Penal Code to Bharatiya Nyay Sanhita, 2023</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8d8f0 0%, #87ceeb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #4CAF50;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .main-title {
+            color: #333;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .section-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px 20px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .section-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .section-input::placeholder {
+            color: #999;
+            font-size: 16px;
+        }
+
+        .click-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .click-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .click-button:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+        }
+
+        .result-title {
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-content {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #4CAF50;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            min-height: 100px;
+        }
+
+        .no-result {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+
+            .input-section {
+                padding: 20px;
+            }
+
+            .section-input {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            .click-button {
+                font-size: 18px;
+                padding: 12px 30px;
+            }
+
+            .result-title {
+                font-size: 1.5rem;
+            }
+
+            .login-box {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .login-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .logout-section {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .search-result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .search-result-item:hover {
+            border-color: #4CAF50;
+            background-color: #d4edda;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        /* Login Styles */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: loginFadeIn 0.8s ease-out;
+        }
+
+        @keyframes loginFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .login-header p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .login-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+            font-size: 14px;
+        }
+
+        .demo-credentials {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .demo-credentials h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .demo-credentials p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* Logout Section */
+        .logout-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-button {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #d32f2f;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .welcome-text {
+            color: #2e7d32;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- Login Section -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <h2>🔐 Legal Database Access</h2>
+                <p>Please enter your credentials to access the IPC to BNS converter</p>
+            </div>
+            
+            <div class="login-form">
+                <div class="input-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" placeholder="Enter your username" class="login-input">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter your password" class="login-input">
+                </div>
+                
+                <button class="login-button" onclick="handleLogin()">LOGIN</button>
+                
+                <div class="login-error" id="loginError"></div>
+                
+                <div class="demo-credentials">
+                    <h4>Demo Credentials:</h4>
+                    <p><strong>Username:</strong> admin</p>
+                    <p><strong>Password:</strong> legal123</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="container" id="loginSection">
-  <h2>🔒 Login</h2>
-  <input type="text" id="username" placeholder="Username">
-  <input type="password" id="password" placeholder="Password">
-  <button class="action-button" onclick="login()">Login</button>
-  <div class="error" id="loginError">Invalid username or password</div>
-</div>
+    <!-- Main Application (Hidden initially) -->
+    <div class="container" id="mainContainer" style="display: none;">
+        <!-- Logout Button -->
+        <div class="logout-section">
+            <button class="logout-button" onclick="handleLogout()">🔓 Logout</button>
+            <span class="welcome-text">Welcome, <span id="loggedInUser"></span>!</span>
+        </div>
 
-<div class="container hidden" id="mainApp">
-  <button onclick="logout()" style="float:right; background:#e74c3c; color:white; border:none; padding:10px; border-radius:5px;">Logout</button>
-  <h2>Indian Penal Code to Bharatiya Nyay Sanhita, 2023</h2>
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Type Keyword to Search old IPC Section" id="keywordSearch">
+        </div>
 
-  <div style="display: flex; align-items: center; justify-content: space-between;">
-    <input type="text" id="searchInput" placeholder="🔍 Type Keyword to Search old IPC Section">
-    <button class="search-button" onclick="searchFromButton()">Search</button>
-  </div>
-  <div class="search-results" id="searchResults"></div>
+        <!-- Main Title -->
+        <h1 class="main-title">Indian Penal Code to Bharatiya Nyay Sanhita, 2023</h1>
 
-  <input type="text" id="ipcInput" placeholder="Enter IPC Section (e.g., 302)">
-  <button class="action-button" onclick="convert()">CLICK</button>
+        <!-- Input Section -->
+        <div class="input-section">
+            <input type="text" class="section-input" placeholder="Enter IPC Section" id="ipcSection">
+            <br>
+            <button class="click-button" onclick="searchSection()">CLICK</button>
+            <div class="loading" id="loading">Searching...</div>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
 
-  <div class="result" id="resultBox" style="display:none;"></div>
-</div>
+        <!-- Result Section -->
+        <div class="result-section">
+            <h2 class="result-title">Bharatiya Nyay Sanhita, 2023 Section:</h2>
+            <div class="result-content" id="resultContent">
+                <div class="no-result">Enter an IPC section number and click the button to see the corresponding Bharatiya Nyay Sanhita section.</div>
+            </div>
+        </div>
+    </div>
 
-<script>
-  const ipcMap = {
-    '302': { bns: '103', desc: 'Punishment for murder' },
-    '304': { bns: '105', desc: 'Culpable homicide not amounting to murder' },
-    '307': { bns: '109', desc: 'Attempt to murder' },
-    '375': { bns: '63', desc: 'Rape' },
-    '376': { bns: '64', desc: 'Punishment for rape' },
-    '379': { bns: '304', desc: 'Punishment for theft' },
-    '420': { bns: '318', desc: 'Cheating and dishonestly inducing delivery of property' }
-  };
-
-  const keywords = {
-    'murder': '302',
-    'homicide': '304',
-    'attempt to kill': '307',
-    'rape': '375',
-    'sexual violence': '376',
-    'theft': '379',
-    'cheating': '420'
-  };
-
-  function login() {
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value.trim();
-    const error = document.getElementById('loginError');
-
-    if (u === 'admin' && p === '1234') {
-      document.getElementById('loginSection').classList.add('hidden');
-      document.getElementById('mainApp').classList.remove('hidden');
-      error.style.display = 'none';
-    } else {
-      error.style.display = 'block';
-    }
-  }
-
-  function logout() {
-    document.getElementById('mainApp').classList.add('hidden');
-    document.getElementById('loginSection').classList.remove('hidden');
-    document.getElementById('resultBox').style.display = 'none';
-    document.getElementById('searchResults').innerHTML = '';
-    document.getElementById('searchInput').value = '';
-    document.getElementById('ipcInput').value = '';
-  }
-
-  function convert() {
-    const ipc = document.getElementById('ipcInput').value.trim();
-    const result = document.getElementById('resultBox');
-
-    if (ipcMap[ipc]) {
-      const bnsData = ipcMap[ipc];
-      result.innerHTML = `<b>IPC ${ipc}:</b> ${bnsData.desc}<br><b>BNS ${bnsData.bns}</b>`;
-      result.style.display = 'block';
-    } else {
-      result.innerHTML = 'No matching section found.';
-      result.style.display = 'block';
-    }
-  }
-
-  function searchFromButton() {
-    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-    searchSections(keyword);
-  }
-
-  function searchSections(keyword) {
-    const results = document.getElementById('searchResults');
-    results.innerHTML = '';
-    if (keyword.length < 2) {
-      results.style.display = 'none';
-      return;
-    }
-
-    let found = false;
-    for (let [desc, section] of Object.entries(keywords)) {
-      if (desc.includes(keyword)) {
-        const item = document.createElement('div');
-        item.textContent = `IPC ${section} - ${ipcMap[section].desc}`;
-        item.onclick = () => {
-          document.getElementById('ipcInput').value = section;
-          results.innerHTML = '';
-          results.style.display = 'none';
+    <script>
+        // Valid credentials (in real application, this would be handled server-side)
+        const validCredentials = {
+            'admin': 'legal123',
+            'lawyer': 'justice456',
+            'judge': 'court789',
+            'police': 'law999'
         };
-        results.appendChild(item);
-        found = true;
-      }
-    }
 
-    if (!found) {
-      results.innerHTML = '<div>No results found</div>';
-    }
+        // Login functionality
+        function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginError = document.getElementById('loginError');
 
-    results.style.display = 'block';
-  }
-</script>
+            // Clear previous errors
+            loginError.style.display = 'none';
+            loginError.textContent = '';
 
+            if (!username || !password) {
+                showLoginError('Please enter both username and password.');
+                return;
+            }
+
+            // Check credentials
+            if (validCredentials[username] && validCredentials[username] === password) {
+                // Successful login
+                loginSuccess(username);
+            } else {
+                showLoginError('Invalid username or password. Please try again.');
+                // Clear password field for security
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function showLoginError(message) {
+            const loginError = document.getElementById('loginError');
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+            
+            // Shake animation for error
+            const loginBox = document.querySelector('.login-box');
+            loginBox.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => {
+                loginBox.style.animation = 'loginFadeIn 0.8s ease-out';
+            }, 500);
+        }
+
+        function loginSuccess(username) {
+            // Hide login container
+            document.getElementById('loginContainer').style.display = 'none';
+            
+            // Show main application
+            document.getElementById('mainContainer').style.display = 'block';
+            
+            // Set logged in user
+            document.getElementById('loggedInUser').textContent = username;
+            
+            // Add fade-in animation to main container
+            const mainContainer = document.getElementById('mainContainer');
+            mainContainer.style.animation = 'fadeInUp 0.8s ease-out';
+        }
+
+        function handleLogout() {
+            // Show confirmation
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear form data
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('keywordSearch').value = '';
+                document.getElementById('ipcSection').value = '';
+                
+                // Reset result content
+                document.getElementById('resultContent').innerHTML = '<div class="no-result">Enter an IPC section number and click the button to see the corresponding Bharatiya Nyay Sanhita section.</div>';
+                
+                // Hide main application
+                document.getElementById('mainContainer').style.display = 'none';
+                
+                // Show login container
+                document.getElementById('loginContainer').style.display = 'flex';
+            }
+        }
+
+        // Allow Enter key for login
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginInputs = document.querySelectorAll('.login-input');
+            loginInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        handleLogin();
+                    }
+                });
+            });
+        });
+        const ipcToBnsMapping = {
+            '302': {
+                bns: '103',
+                title: 'Murder',
+                description: 'Whoever commits murder shall be punished with death, or imprisonment for life, and shall also be liable to fine.'
+            },
+            '376': {
+                bns: '63',
+                title: 'Rape',
+                description: 'Whoever commits rape shall be punished with rigorous imprisonment for a term not less than ten years.'
+            },
+            '420': {
+                bns: '318',
+                title: 'Cheating and dishonestly inducing delivery of property',
+                description: 'Whoever cheats and thereby dishonestly induces the person deceived to deliver any property to any person.'
+            },
+            '379': {
+                bns: '303',
+                title: 'Theft',
+                description: 'Whoever intending to take dishonestly any movable property out of the possession of any person without that person\'s consent.'
+            },
+            '354': {
+                bns: '74',
+                title: 'Assault or criminal force to woman with intent to outrage her modesty',
+                description: 'Whoever assaults or uses criminal force to any woman, intending to outrage or knowing it to be likely that he will thereby outrage her modesty.'
+            },
+            '300': {
+                bns: '101',
+                title: 'Murder',
+                description: 'Except in the cases hereinafter excepted, culpable homicide is murder.'
+            },
+            '375': {
+                bns: '63',
+                title: 'Rape',
+                description: 'A man is said to commit rape if he penetrates his penis to any extent into the vagina, mouth, urethra or anus of a woman or makes her to do so with him or any other person.'
+            },
+            '363': {
+                bns: '137',
+                title: 'Kidnapping',
+                description: 'Whoever conveys any person beyond the limits of India without the consent of that person, or of some person legally authorized to consent on behalf of that person, is said to kidnap that person from India.'
+            },
+            '365': {
+                bns: '139',
+                title: 'Kidnapping or abducting with intent secretly and wrongfully to confine person',
+                description: 'Whoever kidnaps or abducts any person with intent to cause that person to be secretly and wrongfully confined.'
+            },
+            '323': {
+                bns: '115',
+                title: 'Voluntarily causing hurt',
+                description: 'Whoever voluntarily causes hurt shall be punished with imprisonment of either description for a term which may extend to one year, or with fine which may extend to one thousand rupees, or with both.'
+            },
+            '324': {
+                bns: '117',
+                title: 'Voluntarily causing hurt by dangerous weapons or means',
+                description: 'Whoever, except in the case provided for by section 334, voluntarily causes hurt by means of any instrument for shooting, stabbing or cutting.'
+            },
+            '406': {
+                bns: '316',
+                title: 'Criminal breach of trust',
+                description: 'Whoever, being in any manner entrusted with property, or with any dominion over property, dishonestly misappropriates or converts to his own use that property.'
+            },
+            '498A': {
+                bns: '85',
+                title: 'Husband or relative of husband of a woman subjecting her to cruelty',
+                description: 'Whoever, being the husband or the relative of the husband of a woman, subjects such woman to cruelty shall be punished.'
+            },
+            '377': {
+                bns: '377',
+                title: 'Unnatural offences',
+                description: 'Whoever voluntarily has carnal intercourse against the order of nature with any man, woman or animal.'
+            },
+            '417': {
+                bns: '318',
+                title: 'Cheating',
+                description: 'Whoever cheats shall be punished with imprisonment of either description for a term which may extend to one year, or with fine, or with both.'
+            }
+        };
+
+        function searchSection() {
+            const ipcSection = document.getElementById('ipcSection').value.trim();
+            const resultContent = document.getElementById('resultContent');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Clear previous messages
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+
+            if (!ipcSection) {
+                showError('Please enter an IPC section number.');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            resultContent.innerHTML = '<div class="no-result">Searching...</div>';
+
+            // Simulate API call delay
+            setTimeout(() => {
+                loading.style.display = 'none';
+
+                const mapping = ipcToBnsMapping[ipcSection];
+
+                if (mapping) {
+                    resultContent.innerHTML = `
+                        <div style="margin-bottom: 15px;">
+                            <strong>IPC Section ${ipcSection}</strong> corresponds to <strong>BNS Section ${mapping.bns}</strong>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>Title:</strong> ${mapping.title}
+                        </div>
+                        <div>
+                            <strong>Description:</strong> ${mapping.description}
+                        </div>
+                    `;
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="no-result">
+                            No corresponding Bharatiya Nyay Sanhita section found for IPC Section ${ipcSection}. 
+                            Please verify the section number or try another section.
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('ipcSection').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchSection();
+            }
+        });
+
+        // Enhanced keyword search functionality
+        let searchTimeout;
+        document.getElementById('keywordSearch').addEventListener('input', function(e) {
+            const keyword = e.target.value.toLowerCase().trim();
+            const resultContent = document.getElementById('resultContent');
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            if (keyword.length === 0) {
+                // Reset to default state when search is empty
+                resultContent.innerHTML = '<div class="no-result">Enter an IPC section number and click the button to see the corresponding Bharatiya Nyay Sanhita section.</div>';
+                return;
+            }
+            
+            if (keyword.length < 2) {
+                resultContent.innerHTML = '<div class="no-result">Type at least 2 characters to search...</div>';
+                return;
+            }
+            
+            // Debounce search to avoid too many updates
+            searchTimeout = setTimeout(() => {
+                // Search in section numbers, titles, and descriptions
+                const results = Object.entries(ipcToBnsMapping).filter(([section, data]) => 
+                    section.includes(keyword) ||
+                    data.bns.includes(keyword) ||
+                    data.title.toLowerCase().includes(keyword) || 
+                    data.description.toLowerCase().includes(keyword)
+                );
+
+                if (results.length > 0) {
+                    let html = `<div style="margin-bottom: 15px;"><strong>Found ${results.length} result(s) for "${keyword}":</strong></div>`;
+                    results.forEach(([section, data]) => {
+                        // Highlight matching terms
+                        let highlightedTitle = data.title;
+                        let highlightedDesc = data.description;
+                        
+                        if (data.title.toLowerCase().includes(keyword)) {
+                            const regex = new RegExp(`(${keyword})`, 'gi');
+                            highlightedTitle = data.title.replace(regex, '<mark>$1</mark>');
+                        }
+                        
+                        if (data.description.toLowerCase().includes(keyword)) {
+                            const regex = new RegExp(`(${keyword})`, 'gi');
+                            highlightedDesc = data.description.replace(regex, '<mark>$1</mark>');
+                        }
+                        
+                        html += `
+                            <div style="margin-bottom: 15px; padding: 15px; background: #e8f5e8; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;" 
+                                 onclick="selectSection('${section}')"
+                                 onmouseover="this.style.borderColor='#4CAF50'; this.style.backgroundColor='#d4edda';"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.backgroundColor='#e8f5e8';">
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #2e7d32;">
+                                    IPC Section ${section} → BNS Section ${data.bns}
+                                </div>
+                                <div style="font-weight: 600; margin-bottom: 5px; color: #1b5e20;">
+                                    ${highlightedTitle}
+                                </div>
+                                <div style="font-size: 14px; color: #555; line-height: 1.4;">
+                                    ${highlightedDesc.length > 150 ? highlightedDesc.substring(0, 150) + '...' : highlightedDesc}
+                                </div>
+                                <div style="font-size: 12px; color: #4CAF50; margin-top: 8px; font-weight: 500;">
+                                    Click to select this section
+                                </div>
+                            </div>
+                        `;
+                    });
+                    resultContent.innerHTML = html;
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="no-result">
+                            No results found for "<strong>${keyword}</strong>". 
+                            <br><br>Try searching for terms like:
+                            <br>• "murder" (for IPC 302)
+                            <br>• "theft" (for IPC 379) 
+                            <br>• "cheating" (for IPC 420)
+                            <br>• "rape" (for IPC 376)
+                            <br>• Or enter section numbers directly
+                        </div>
+                    `;
+                }
+            }, 300); // 300ms delay for debouncing
+        });
+        
+        // Function to select a section from search results
+        function selectSection(section) {
+            document.getElementById('ipcSection').value = section;
+            document.getElementById('keywordSearch').value = '';
+            searchSection();
+        }
+    </script>
 </body>
 </html>
